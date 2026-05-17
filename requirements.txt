@@ -1,0 +1,3 @@
+agno
+feedparser
+google-genai

@@ -1,0 +1,5 @@
+{
+    "OpenAI": "https://openai.com/news/rss.xml",
+    "Google_AI": "https://blog.google/technology/ai/rss/",
+    "Hugging_Face": "https://huggingface.co/blog/feed.xml"
+}
