@@ -7,7 +7,7 @@ The architecture is built from the ground up using **Object-Oriented Design (OOD
 ---
 
 ## 🏗️ System Architecture & Design Paradigms
-![Architecture Diagram]svg.png
+![Architecture Diagram](svg.png)
 
 The codebase departs from fragile monolithic scripting models to adopt modern enterprise design patterns:
 
