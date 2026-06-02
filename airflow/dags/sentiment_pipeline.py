@@ -43,10 +43,10 @@ with DAG(
         python_callable=run_isolated_pipeline,
         # Requirements specifically needed by your AI agent code
         requirements=[
-            "feedparser==6.0.11",
+            "feedparser==6.0.12",
             "python-dateutil==2.9.0.post0",
-            "agno==1.0.1",
-            "google-genai==0.1.1",
+            "agno==2.6.11",
+            "google-genai==2.7.0",
             "typing-extensions>=4.10.0" # Keeps google-genai completely satisfied
         ],
         # System env variables to pass down into the isolated execution space
