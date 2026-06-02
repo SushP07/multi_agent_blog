@@ -8,8 +8,8 @@ class DigestPipeline:
     def __init__(self, output_dir: str = "digests"):
         self.output_dir = output_dir
         self.config_loader = ConfigLoader()
-        self.ingestion_engine = RSSIngestionEngine()
-        self.editorial_engine = AIEditorialEngine()
+        self.ingestion_engine = RSSIngestionEngine(digests_dir=output_dir)
+        self.editorial_engine = AIEditorialEngine() # Instantiated as editorial_engine
 
     def _persist_to_disk(self, content: str) -> str:
         """Internal helper handling file persistence encapsulation."""
@@ -26,22 +26,27 @@ class DigestPipeline:
 
     def run(self):
         """Orchestrates the ingestion, processing, and output generation."""
-        # Load sources config data
-        sources = self.load_sources()
+        print("📁 Loading news source channels from JSON config...")
+        # FIX 1: Route configuration extraction through the config_loader instance
+        config_data = self.config_loader.load_sources()
         
-        # --- FIXED ALIGNMENT LINE HERE ---
-        # Update from fetch_all_feeds to scrape_feeds
+        # Safe extraction handle regardless of whether sources.json maps a root list or dictionary wrapper
+        sources = config_data.get("sources", []) if isinstance(config_data, dict) else config_data
+        
+        print("📡 Triggering self-healing adaptive gap scan...")
         raw_data = self.ingestion_engine.scrape_feeds(sources)
-        # ----------------------------------
 
         if not raw_data:
             print("📅 No new articles found within the gap scan window today. Exiting smoothly.")
             return "No updates."
 
-        # Dispatch the payload cleanly down to your resilient editor engine
-        print("🤖 Forwarding collected data to the AI Editorial Engine...")
-        digest_content = self.editor_engine.generate_digest(raw_data)
+        print("🤖 Forwarding collected data delta to AI Editorial Engine...")
+        # FIX 2: Corrected attribute call name from editor_engine to self.editorial_engine
+        digest_content = self.editorial_engine.generate_digest(raw_data)
         
-        # Persist output to the digests folder
-        self.save_output(digest_content)
+        print("💾 Persisting generated markdown intelligence brief to disk...")
+        # FIX 3: Route saving handle through the existing _persist_to_disk method
+        saved_path = self._persist_to_disk(digest_content)
+        
+        print(f"✅ Success! Daily brief compiled cleanly at: {saved_path}")
         return "Pipeline run executed successfully."
