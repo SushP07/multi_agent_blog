@@ -1,0 +1,60 @@
+name: Scheduled Daily Macro Sentiment Airflow Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Executes daily at 06:00 UTC
+  workflow_dispatch: # Allows manual trigger from the GitHub UI anytime
+
+permissions:
+  contents: write # Grants the runner permissions to write fresh digests back to your repository
+
+jobs:
+  run-airflow-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install System and Airflow Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          
+          # Install Apache Airflow core using official strict constraint checks for Python 3.11
+          pip install "apache-airflow==2.8.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt"
+
+      - name: Initialize Ephemeral Airflow Database
+        env:
+          AIRFLOW_HOME: ${{ github.workspace }}/airflow
+        run: |
+          # Bootstrap a lightweight metadata instance inside the runner to back the engine
+          airflow db init
+
+      - name: Execute Airflow DAG Task Instance
+        env:
+          AIRFLOW_HOME: ${{ github.workspace }}/airflow
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # Execute the localized target task using the Airflow CLI evaluation engine
+          airflow dags test realtime_macro_sentiment_pipeline $(date +'%Y-%m-%d')
+
+      - name: Commit and Push Generated Artifacts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          
+          # Structural guardrail: Prevent blank commits if no T-1 data was written
+          if [ -n "$(git status --porcelain digests/)" ]; then
+            git add digests/
+            git commit -m "chore: automated daily macro sentiment digest compilation [skip ci]"
+            git push
+          else
+            echo "No new updates written to disk for the previous day. Skipping commit."
+          fi
