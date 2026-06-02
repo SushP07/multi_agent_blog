@@ -66,15 +66,15 @@ class RSSIngestionEngine:
                 # Convert the raw RSS feed time tuple to a timezone-aware datetime object
                 post_time = datetime.fromtimestamp(time.mktime(entry.published_parsed), tz=timezone.utc)
                 
-                # Clean, safe evaluation boundary loop tracking the gap window
-                if last_digest_date < post_time <= now_utc:
-                    scraped_payload.append({
-                        "source": source_name,
-                        "title": entry.title,
-                        "link": entry.link,
-                        "summary": entry.get("summary", "No summary provided.")
-                    })
-                # ------------------------------------
+                # # Clean, safe evaluation boundary loop tracking the gap window
+                # if last_digest_date < post_time <= now_utc:
+                #     scraped_payload.append({
+                #         "source": source_name,
+                #         "title": entry.title,
+                #         "link": entry.link,
+                #         "summary": entry.get("summary", "No summary provided.")
+                #     })
+                # # ------------------------------------
 
         # 3. Serialize gathered items into a raw structural payload block for the LLM Editor
         if not scraped_payload:
