@@ -20,7 +20,7 @@ jobs:
       - name: Set Up Python Environment
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
       - name: Install Airflow and Environment Tools
         run: |
@@ -29,7 +29,7 @@ jobs:
           pip install virtualenv
           
           # Install Airflow core cleanly under standard core constraints
-          pip install "apache-airflow==3.2.2" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt"
+          pip install "apache-airflow==2.8.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt"
 
       - name: Initialize Ephemeral Airflow Database
         env:
