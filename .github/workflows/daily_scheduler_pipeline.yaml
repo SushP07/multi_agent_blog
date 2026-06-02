@@ -1,6 +1,7 @@
 name: Scheduled Daily Macro Sentiment Airflow Pipeline
 
 on:
+  push:
   schedule:
     - cron: '0 6 * * *' # Executes daily at 06:00 UTC
   workflow_dispatch: # Allows manual trigger from the GitHub UI anytime
