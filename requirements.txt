@@ -1,4 +1,4 @@
-agno
-feedparser
-google-genai
-python-dateutil
+agno==2.6.11
+feedparser==6.0.12
+google-genai==2.7.0
+python-dateutil==2.9.0.post0
