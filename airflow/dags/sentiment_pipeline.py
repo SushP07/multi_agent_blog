@@ -1,8 +1,9 @@
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from airflow import DAG
 from airflow.operators.python import PythonVirtualenvOperator
+
 
 default_args = {
     'owner': 'Sushrut Pakhale',
@@ -11,6 +12,7 @@ default_args = {
     'retries': 2,
     'retry_delay': timedelta(minutes=2),
 }
+
 
 def run_isolated_pipeline():
     """This function runs inside a completely isolated Python environment."""
