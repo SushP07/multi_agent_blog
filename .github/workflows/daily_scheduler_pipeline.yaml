@@ -47,8 +47,8 @@ jobs:
 
       - name: Commit and Push Generated Artifacts
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Bot"
+          git config --local user.email "spakhale.sp@gmail.com"
+          git config --local user.name "Sushrut Pakhale"
           
           # Structural guardrail: Prevent blank commits if no T-1 data was written
           if [ -n "$(git status --porcelain digests/)" ]; then
