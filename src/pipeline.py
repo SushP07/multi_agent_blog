@@ -24,18 +24,24 @@ class DigestPipeline:
             file.write(meta_header + content)
         return file_path
 
-    def run(self) -> os.PathLike:
-        """Orchestrates the end-to-end data processing workflow."""
-        sources = self.config_loader.load_sources()
-        if not sources:
-            raise ValueError("No target sources found in configuration.")
-
-        raw_data = self.ingestion_engine.fetch_all_feeds(sources)
-        if not raw_data.strip():
-            raise ValueError("No data scraped from specified network target channels.")
-
-        print("\n🤖 Invoking AI Editorial Agent...")
-        digest_content = self.editorial_engine.generate_digest(raw_data)
+    def run(self):
+        """Orchestrates the ingestion, processing, and output generation."""
+        # Load sources config data
+        sources = self.load_sources()
         
-        saved_path = self._persist_to_disk(digest_content)
-        return saved_path
+        # --- FIXED ALIGNMENT LINE HERE ---
+        # Update from fetch_all_feeds to scrape_feeds
+        raw_data = self.ingestion_engine.scrape_feeds(sources)
+        # ----------------------------------
+
+        if not raw_data:
+            print("📅 No new articles found within the gap scan window today. Exiting smoothly.")
+            return "No updates."
+
+        # Dispatch the payload cleanly down to your resilient editor engine
+        print("🤖 Forwarding collected data to the AI Editorial Engine...")
+        digest_content = self.editor_engine.generate_digest(raw_data)
+        
+        # Persist output to the digests folder
+        self.save_output(digest_content)
+        return "Pipeline run executed successfully."
